@@ -78,6 +78,7 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import com.linecorp.centraldogma.common.Author;
 import com.linecorp.centraldogma.common.Change;
 import com.linecorp.centraldogma.common.Entry;
 import com.linecorp.centraldogma.common.EntryType;
@@ -126,8 +127,16 @@ abstract class AbstractGitMirror extends AbstractMirror {
                       Credential credential, Repository localRepo, String localPath,
                       URI remoteRepoUri, String remotePath, String remoteBranch,
                       @Nullable String gitignore, @Nullable String zone) {
+        this(id, enabled, schedule, direction, credential, localRepo, localPath,
+             remoteRepoUri, remotePath, remoteBranch, gitignore, zone, null);
+    }
+
+    AbstractGitMirror(String id, boolean enabled, @Nullable Cron schedule, MirrorDirection direction,
+                      Credential credential, Repository localRepo, String localPath,
+                      URI remoteRepoUri, String remotePath, String remoteBranch,
+                      @Nullable String gitignore, @Nullable String zone, @Nullable Author mirrorAuthor) {
         super(id, enabled, schedule, direction, credential, localRepo, localPath, remoteRepoUri, remotePath,
-              remoteBranch, gitignore, zone);
+              remoteBranch, gitignore, zone, mirrorAuthor);
 
         if (gitignore != null) {
             ignoreNode = new IgnoreNode();

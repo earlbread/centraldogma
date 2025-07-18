@@ -84,7 +84,7 @@ class LocalToRemoteGitMirrorTest {
         @Override
         protected void configure(CentralDogmaBuilder builder) {
             builder.pluginConfigs(
-                    new MirroringServicePluginConfig(true, 1, MAX_NUM_FILES, MAX_NUM_BYTES, false));
+                    new MirroringServicePluginConfig(true, 1, MAX_NUM_FILES, MAX_NUM_BYTES, false, null));
         }
     };
 
