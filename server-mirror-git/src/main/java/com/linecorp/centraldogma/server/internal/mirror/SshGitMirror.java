@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import com.cronutils.model.Cron;
 import com.google.common.annotations.VisibleForTesting;
 
+import com.linecorp.centraldogma.common.Author;
 import com.linecorp.centraldogma.common.MirrorException;
 import com.linecorp.centraldogma.server.command.CommandExecutor;
 import com.linecorp.centraldogma.server.credential.Credential;
@@ -85,9 +86,9 @@ final class SshGitMirror extends AbstractGitMirror {
     SshGitMirror(String id, boolean enabled, @Nullable Cron schedule, MirrorDirection direction,
                  Credential credential, Repository localRepo, String localPath,
                  URI remoteRepoUri, String remotePath, String remoteBranch,
-                 @Nullable String gitignore, @Nullable String zone) {
+                 @Nullable String gitignore, @Nullable String zone, @Nullable Author mirrorAuthor) {
         super(id, enabled, schedule, direction, credential, localRepo, localPath,
-              remoteRepoUri, remotePath, remoteBranch, gitignore, zone);
+              remoteRepoUri, remotePath, remoteBranch, gitignore, zone, mirrorAuthor);
     }
 
     @Override

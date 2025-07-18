@@ -233,7 +233,7 @@ abstract class AbstractGitMirror extends AbstractMirror {
                                    " to the repository '" + remoteRepoUri() + '#' + remoteBranch() + "'\n";
             description = summary;
             final ObjectId nextCommitId =
-                    commit(gitRepository, dirCache, headCommitId, summary);
+                    commit(gitRepository, dirCache, headCommitId, summary, mirrorAuthor);
             logger.info(summary);
             updateRef(gitRepository, revWalk, headBranchRefName, nextCommitId);
         }
@@ -366,7 +366,7 @@ abstract class AbstractGitMirror extends AbstractMirror {
 
         try {
             final CommitResult commitResult = executor.execute(Command.push(
-                    MIRROR_AUTHOR, localRepo().parent().name(), localRepo().name(),
+                    mirrorAuthor, localRepo().parent().name(), localRepo().name(),
                     Revision.HEAD, summary, detail, Markup.PLAINTEXT, changes.values())).join();
             final String description = summary + ", revision: " + commitResult.revision().text();
             return newMirrorResult(MirrorStatus.SUCCESS, description, triggeredTime);
@@ -715,13 +715,13 @@ abstract class AbstractGitMirror extends AbstractMirror {
     }
 
     private static ObjectId commit(org.eclipse.jgit.lib.Repository gitRepository, DirCache dirCache,
-                                   ObjectId headCommitId, String message) throws IOException {
+                                   ObjectId headCommitId, String message, Author author) throws IOException {
         try (ObjectInserter inserter = gitRepository.newObjectInserter()) {
             // flush the current index to repository and get the result tree object id.
             final ObjectId nextTreeId = dirCache.writeTree(inserter);
             // build a commit object
             final PersonIdent personIdent =
-                    new PersonIdent(MIRROR_AUTHOR.name(), MIRROR_AUTHOR.email(),
+                    new PersonIdent(author.name(), author.email(),
                                     System.currentTimeMillis() / 1000L * 1000L, // Drop the milliseconds
                                     0);
 

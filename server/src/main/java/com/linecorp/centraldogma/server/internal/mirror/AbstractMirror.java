@@ -50,7 +50,7 @@ public abstract class AbstractMirror implements Mirror {
 
     private static final CronDescriptor CRON_DESCRIPTOR = CronDescriptor.instance();
 
-    protected static final Author MIRROR_AUTHOR = new Author("Mirror", "mirror@localhost.localdomain");
+    private static final Author DEFAULT_MIRROR_AUTHOR = new Author("Mirror", "mirror@localhost.localdomain");
 
     private final String id;
     private final boolean enabled;
@@ -70,11 +70,20 @@ public abstract class AbstractMirror implements Mirror {
     @Nullable
     private final ExecutionTime executionTime;
     private final long jitterMillis;
+    protected final Author mirrorAuthor;
 
     protected AbstractMirror(String id, boolean enabled, @Nullable Cron schedule, MirrorDirection direction,
                              Credential credential, Repository localRepo, String localPath,
                              URI remoteRepoUri, String remotePath, String remoteBranch,
                              @Nullable String gitignore, @Nullable String zone) {
+        this(id, enabled, schedule, direction, credential, localRepo, localPath,
+             remoteRepoUri, remotePath, remoteBranch, gitignore, zone, null);
+    }
+
+    protected AbstractMirror(String id, boolean enabled, @Nullable Cron schedule, MirrorDirection direction,
+                             Credential credential, Repository localRepo, String localPath,
+                             URI remoteRepoUri, String remotePath, String remoteBranch,
+                             @Nullable String gitignore, @Nullable String zone, @Nullable Author mirrorAuthor) {
         this.id = requireNonNull(id, "id");
         this.enabled = enabled;
         this.direction = requireNonNull(direction, "direction");
@@ -86,6 +95,7 @@ public abstract class AbstractMirror implements Mirror {
         this.remoteBranch = requireNonNull(remoteBranch, "remoteBranch");
         this.gitignore = gitignore;
         this.zone = zone;
+        this.mirrorAuthor = mirrorAuthor != null ? mirrorAuthor : DEFAULT_MIRROR_AUTHOR;
 
         if (schedule != null) {
             this.schedule = requireNonNull(schedule, "schedule");

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
+import com.linecorp.centraldogma.common.Author;
 import com.linecorp.centraldogma.server.plugin.AbstractPluginConfig;
 
 /**
@@ -32,7 +33,7 @@ import com.linecorp.centraldogma.server.plugin.AbstractPluginConfig;
 public final class MirroringServicePluginConfig extends AbstractPluginConfig {
 
     public static final MirroringServicePluginConfig INSTANCE =
-            new MirroringServicePluginConfig(true, null, null, null, false);
+            new MirroringServicePluginConfig(true, null, null, null, false, null);
 
     static final int DEFAULT_NUM_MIRRORING_THREADS = 16;
     static final int DEFAULT_MAX_NUM_FILES_PER_MIRROR = 8192;
@@ -43,12 +44,14 @@ public final class MirroringServicePluginConfig extends AbstractPluginConfig {
     private final long maxNumBytesPerMirror;
     private final boolean zonePinned;
     private final boolean runMigration;
+    @Nullable
+    private final Author defaultMirrorAuthor;
 
     /**
      * Creates a new instance.
      */
     public MirroringServicePluginConfig(boolean enabled) {
-        this(enabled, null, null, null, false);
+        this(enabled, null, null, null, false, null);
     }
 
     /**
@@ -60,7 +63,8 @@ public final class MirroringServicePluginConfig extends AbstractPluginConfig {
             @JsonProperty("numMirroringThreads") @Nullable Integer numMirroringThreads,
             @JsonProperty("maxNumFilesPerMirror") @Nullable Integer maxNumFilesPerMirror,
             @JsonProperty("maxNumBytesPerMirror") @Nullable Long maxNumBytesPerMirror,
-            @JsonProperty("zonePinned") boolean zonePinned) {
+            @JsonProperty("zonePinned") boolean zonePinned,
+            @JsonProperty("defaultMirrorAuthor") @Nullable Author defaultMirrorAuthor) {
         super(enabled);
         this.numMirroringThreads = firstNonNull(numMirroringThreads, DEFAULT_NUM_MIRRORING_THREADS);
         checkArgument(this.numMirroringThreads > 0,
@@ -72,6 +76,7 @@ public final class MirroringServicePluginConfig extends AbstractPluginConfig {
         checkArgument(this.maxNumBytesPerMirror > 0,
                       "maxNumBytesPerMirror: %s (expected: > 0)", this.maxNumBytesPerMirror);
         this.zonePinned = zonePinned;
+        this.defaultMirrorAuthor = defaultMirrorAuthor;
         runMigration = true;
     }
 
@@ -93,6 +98,7 @@ public final class MirroringServicePluginConfig extends AbstractPluginConfig {
         this.maxNumFilesPerMirror = firstNonNull(maxNumFilesPerMirror, DEFAULT_MAX_NUM_FILES_PER_MIRROR);
         this.maxNumBytesPerMirror = firstNonNull(maxNumBytesPerMirror, DEFAULT_MAX_NUM_BYTES_PER_MIRROR);
         this.zonePinned = zonePinned;
+        this.defaultMirrorAuthor = null; // Deprecated constructor does not support defaultMirrorAuthor
         this.runMigration = runMigration;
     }
 
@@ -138,6 +144,15 @@ public final class MirroringServicePluginConfig extends AbstractPluginConfig {
         return runMigration;
     }
 
+    /**
+     * Returns the default author for mirroring operations.
+     */
+    @Nullable
+    @JsonProperty
+    public Author defaultMirrorAuthor() {
+        return defaultMirrorAuthor;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
@@ -145,6 +160,7 @@ public final class MirroringServicePluginConfig extends AbstractPluginConfig {
                           .add("maxNumFilesPerMirror", maxNumFilesPerMirror)
                           .add("maxNumBytesPerMirror", maxNumBytesPerMirror)
                           .add("zonePinned", zonePinned)
+                          .add("defaultMirrorAuthor", defaultMirrorAuthor)
                           .toString();
     }
 }

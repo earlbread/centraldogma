@@ -32,6 +32,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import com.cronutils.model.Cron;
 
+import com.linecorp.centraldogma.common.Author;
 import com.linecorp.centraldogma.server.command.CommandExecutor;
 import com.linecorp.centraldogma.server.credential.Credential;
 import com.linecorp.centraldogma.server.internal.credential.AccessTokenCredential;
@@ -47,9 +48,9 @@ final class DefaultGitMirror extends AbstractGitMirror {
     DefaultGitMirror(String id, boolean enabled, @Nullable Cron schedule, MirrorDirection direction,
                      Credential credential, Repository localRepo, String localPath,
                      URI remoteRepoUri, String remotePath, String remoteBranch,
-                     @Nullable String gitignore, @Nullable String zone) {
+                     @Nullable String gitignore, @Nullable String zone, @Nullable Author mirrorAuthor) {
         super(id, enabled, schedule, direction, credential, localRepo, localPath, remoteRepoUri, remotePath,
-              remoteBranch, gitignore, zone);
+              remoteBranch, gitignore, zone, mirrorAuthor);
     }
 
     @Override

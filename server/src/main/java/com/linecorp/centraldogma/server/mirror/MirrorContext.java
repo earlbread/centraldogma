@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import com.cronutils.model.Cron;
 import com.google.common.base.MoreObjects;
 
+import com.linecorp.centraldogma.common.Author;
 import com.linecorp.centraldogma.server.credential.Credential;
 import com.linecorp.centraldogma.server.storage.repository.Repository;
 
@@ -46,6 +47,8 @@ public final class MirrorContext {
     private final String gitignore;
     @Nullable
     private final String zone;
+    @Nullable
+    private final Author mirrorAuthor;
 
     /**
      * Creates a new instance.
@@ -53,6 +56,17 @@ public final class MirrorContext {
     public MirrorContext(String id, boolean enabled, @Nullable Cron schedule, MirrorDirection direction,
                          Credential credential, Repository localRepo,
                          String localPath, URI remoteUri, @Nullable String gitignore, @Nullable String zone) {
+        this(id, enabled, schedule, direction, credential, localRepo, localPath, remoteUri, gitignore, zone,
+             null);
+    }
+
+    /**
+     * Creates a new instance.
+     */
+    public MirrorContext(String id, boolean enabled, @Nullable Cron schedule, MirrorDirection direction,
+                         Credential credential, Repository localRepo,
+                         String localPath, URI remoteUri, @Nullable String gitignore, @Nullable String zone,
+                         @Nullable Author mirrorAuthor) {
         this.id = requireNonNull(id, "id");
         this.enabled = enabled;
         this.schedule = schedule;
@@ -63,6 +77,7 @@ public final class MirrorContext {
         this.remoteUri = requireNonNull(remoteUri, "remoteUri");
         this.gitignore = gitignore;
         this.zone = zone;
+        this.mirrorAuthor = mirrorAuthor;
     }
 
     /**
@@ -139,6 +154,14 @@ public final class MirrorContext {
         return zone;
     }
 
+    /**
+     * Returns the author for mirroring operations.
+     */
+    @Nullable
+    public Author mirrorAuthor() {
+        return mirrorAuthor;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).omitNullValues()
@@ -152,6 +175,7 @@ public final class MirrorContext {
                           .add("remoteUri", remoteUri)
                           .add("gitignore", gitignore)
                           .add("zone", zone)
+                          .add("mirrorAuthor", mirrorAuthor)
                           .toString();
     }
 }

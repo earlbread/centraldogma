@@ -550,6 +550,18 @@ properties that can be configured:
    - whether the mirroring plugin is pinned to a specific zone. If ``true``, a mirroring task will be executed
      only in the specified zone. If ``false``, the plugin will be executed in the leader replica.
 
+- ``defaultMirrorAuthor`` (object)
+
+  - the default author information to use for mirroring operations. If ``null``, the default author
+    ``Mirror <mirror@localhost.localdomain>`` is used. Example:
+
+    .. code-block:: json
+
+       {
+         "name": "CentralDogma Mirror Bot",
+         "email": "mirror-bot@example.com"
+       }
+
 For more information about mirroring, refer to :ref:`mirroring`.
 
 .. _hiding_sensitive_property_values:
